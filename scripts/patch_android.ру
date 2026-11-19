@@ -1,0 +1,62 @@
+"""Tailors the generated Capacitor Android project for Samsung Galaxy S24 playback."""
+import os
+import re
+
+ROOT = "android/app/src/main"
+
+# 1) MainActivity: autoplay without user gesture (next track in background),
+#    dark window + light status bar icons for the black UI.
+java_dir = os.path.join(ROOT, "java", "com", "armamus", "player")
+os.makedirs(java_dir, exist_ok=True)
+with open(os.path.join(java_dir, "MainActivity.java"), "w", encoding="utf-8") as f:
+    f.write(
+        """package com.armamus.player;
+
+import android.graphics.Color;
+import android.os.Bundle;
+import androidx.core.view.WindowCompat;
+import com.getcapacitor.BridgeActivity;
+
+public class MainActivity extends BridgeActivity {
+    @Override
+    public void onCreate(Bundle savedInstanceState) {
+        super.onCreate(savedInstanceState);
+        getWindow().getDecorView().setBackgroundColor(Color.parseColor("#050507"));
+        WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView()).setAppearanceLightStatusBars(false);
+        WindowCompat.getInsetsController(getWindow(), getWindow().getDecorView()).setAppearanceLightNavigationBars(false);
+    }
+
+    @Override
+    public void onStart() {
+        super.onStart();
+        try {
+            getBridge().getWebView().getSettings().setMediaPlaybackRequiresUserGesture(false);
+        } catch (Exception ignored) {
+        }
+    }
+}
+"""
+    )
+
+# 2) Manifest: background playback permissions + big heap for large FLAC files.
+mf = os.path.join(ROOT, "AndroidManifest.xml")
+with open(mf, encoding="utf-8") as f:
+    x = f.read()
+
+perms = [
+    "android.permission.WAKE_LOCK",
+    "android.permission.FOREGROUND_SERVICE",
+    "android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK",
+    "android.permission.POST_NOTIFICATIONS",
+]
+add = ""
+for p in perms:
+    if p not in x:
+        add += '    <uses-permission android:name="%s" />\n' % p
+x = x.replace("<application", add + "    <application", 1)
+if "android:largeHeap" not in x:
+    x = x.replace("<application", '<application android:largeHeap="true"', 1)
+with open(mf, "w", encoding="utf-8") as f:
+    f.write(x)
+
+print("patched")
