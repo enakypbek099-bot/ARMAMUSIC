@@ -329,18 +329,13 @@ jobs:
               }
 
               @Override
-              public void onPause() {
-                  super.onPause();
-                  keepAlive();
-              }
-
-              @Override
               public void onStop() {
                   super.onStop();
                   keepAlive();
               }
 
               private void keepAlive() {
+                  if (!MediaService.running) return;
                   try {
                       WebView w = getBridge().getWebView();
                       w.onResume();
