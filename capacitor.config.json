@@ -1,0 +1,11 @@
+{
+  "appId": "com.armamus.player",
+  "appName": "Armamus",
+  "webDir": "www",
+  "backgroundColor": "#050507",
+  "android": {
+    "adjustMarginsForEdgeToEdge": "auto",
+    "allowMixedContent": false,
+    "webContentsDebuggingEnabled": false
+  }
+}
