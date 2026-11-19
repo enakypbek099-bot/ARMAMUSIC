@@ -20,6 +20,12 @@ jobs:
           distribution: temurin
           java-version: 21
 
+      - name: Prepare web files
+        run: |
+          mkdir -p www
+          if [ ! -f www/index.html ] && [ -f index.html ]; then cp index.html www/index.html; fi
+          test -f www/index.html || { echo "index.html not found in repo (www/index.html or index.html)"; ls -la; exit 1; }
+
       - name: Install dependencies
         run: npm install
 
@@ -98,4 +104,3 @@ jobs:
         with:
           name: armamus-apk
           path: android/app/build/outputs/apk/debug/app-debug.apk
-
