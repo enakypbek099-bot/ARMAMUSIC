@@ -1,0 +1,12 @@
+{
+  "name": "armamus",
+  "version": "1.0.0",
+  "private": true,
+  "description": "Armamus music player (Capacitor Android wrapper)",
+  "dependencies": {
+    "@capacitor/android": "latest",
+    "@capacitor/cli": "latest",
+    "@capacitor/core": "latest",
+    "@anuradev/capacitor-background-mode": "latest"
+  }
+}
